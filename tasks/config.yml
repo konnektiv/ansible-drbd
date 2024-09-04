@@ -42,8 +42,10 @@
   with_items: "{{ drbd_disks}}"
   failed_when: >
     _drbd_mirror_device_up.rc != 0 and
-    _drbd_mirror_device_up.stderr.find("volume exists already") == -1
-  changed_when: _drbd_mirror_device_up.stderr.find("volume exists already") == -1
+    ( _drbd_mirror_device_up.stderr.find("volume exists already") == -1 and 
+      _drbd_mirror_device_up.stderr.find(" is configured!") == -1 )
+  changed_when: ( _drbd_mirror_device_up.stderr.find("volume exists already") == -1 and 
+    _drbd_mirror_device_up.stderr.find(" is configured!") == -1 )
 
 - name: config | Waiting For DRBD Node To Be Ready
   command: drbdadm status {{ item['resource'] }}
