@@ -59,6 +59,15 @@
     _drbd_mirror_device_up['changed'] and
     inventory_hostname == groups[drbd_group][0]
 
+- name: config | Initializing DRBD Device
+  command: drbdadm new-current-uuid --clear-bitmap {{ item['resource'] }}
+  become: true
+  register: _drbd_mirror_device_init
+  with_items: "{{drbd_disks}}"
+  when: >
+    _drbd_mirror_device_up['changed'] and
+    inventory_hostname == groups[drbd_group][0]
+
 - name: config | Defining DRBD Primary
   command: drbdadm primary --force {{ item['resource'] }}
   become: true
